@@ -45,7 +45,6 @@ public:
     /// Destruct.
     ~AnimatedModel() override;
     /// Register object factory. Drawable must be registered first.
-    /// @nobind
     static void RegisterObject(Context* context);
 
     /// Load from binary data. Return true if successful.
@@ -179,6 +178,8 @@ public:
     /// Recalculate the bone bounding box. Normally called internally, but can also be manually called if up-to-date information before rendering is necessary.
     void UpdateBoneBoundingBox();
 
+    void SetRagdollRecovery(bool recover){ ragdollRecovery_ = recover; }
+
 protected:
     /// Handle node being assigned.
     void OnNodeSet(Node* node) override;
@@ -270,6 +271,9 @@ private:
     bool assignBonesPending_;
     /// Force animation update after becoming visible flag.
     bool forceAnimationUpdate_;
+    /// Ragdoll recovery
+    bool ragdollRecovery_;
+
 };
 
 }

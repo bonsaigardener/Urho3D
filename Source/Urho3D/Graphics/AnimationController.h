@@ -49,7 +49,10 @@ struct URHO3D_API AnimationControl
         setWeight_(0),
         setTimeRev_(0),
         setWeightRev_(0),
-        removeOnCompletion_(true)
+        removeOnCompletion_(true),
+        ragdollRecovery_(false),
+        ragdollRecoverTime_(0.0f),
+        ragdollTimeElapsed_(0.0f)
     {
     }
 
@@ -79,6 +82,11 @@ struct URHO3D_API AnimationControl
     unsigned char setWeightRev_;
     /// Sets whether this should automatically be removed when it finishes playing.
     bool removeOnCompletion_;
+
+    /// ragdoll
+    bool  ragdollRecovery_;
+    float ragdollRecoverTime_;
+    float ragdollTimeElapsed_;
 };
 
 /// %Component that drives an AnimatedModel's animations.
@@ -92,7 +100,6 @@ public:
     /// Destruct.
     ~AnimationController() override;
     /// Register object factory.
-    /// @nobind
     static void RegisterObject(Context* context);
 
     /// Handle enabled/disabled state change.
@@ -189,6 +196,9 @@ public:
     const PODVector<unsigned char>& GetNetAnimationsAttr() const;
     /// Return node animation states attribute.
     VariantVector GetNodeAnimationStatesAttr() const;
+    /// ragdoll recovery
+    bool SetRagdollRecovery(const String& name, float recoverTime=0.5f);
+    bool RemoveOtherRagdollRecoveryAnimation(const String& name);
 
 protected:
     /// Handle scene being assigned.
@@ -210,6 +220,11 @@ private:
     Vector<SharedPtr<AnimationState> > nodeAnimationStates_;
     /// Attribute buffer for network replication.
     mutable VectorBuffer attrBuffer_;
+
+    // ragdoll recovery
+    bool  ragdollRecovery_;
+    float ragdollRecoverTime_;
+    float ragdollTimeElapsed_;
 };
 
 }

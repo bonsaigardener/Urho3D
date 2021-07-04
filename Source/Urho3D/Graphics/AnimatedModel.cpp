@@ -83,7 +83,8 @@ AnimatedModel::AnimatedModel(Context* context) :
     isMaster_(true),
     loading_(false),
     assignBonesPending_(false),
-    forceAnimationUpdate_(false)
+    forceAnimationUpdate_(false),
+    ragdollRecovery_(false)
 {
 }
 
@@ -1286,7 +1287,10 @@ void AnimatedModel::ApplyAnimation()
     // (first AnimatedModel in a node)
     if (isMaster_)
     {
-        skeleton_.ResetSilent();
+        if (!ragdollRecovery_)
+        {
+            skeleton_.ResetSilent();
+        }
         for (Vector<SharedPtr<AnimationState> >::Iterator i = animationStates_.Begin(); i != animationStates_.End(); ++i)
             (*i)->Apply();
 
