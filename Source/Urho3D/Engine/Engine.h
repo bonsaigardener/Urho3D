@@ -120,6 +120,10 @@ public:
     /// @property
     bool IsHeadless() const { return headless_; }
 
+	bool IsMainEngine() const { return isMainEngine_; }
+
+	void SetIsMainEngine(bool _v) { isMainEngine_ = _v; }
+
     /// Send frame update events.
     void Update();
     /// Render after frame update.
@@ -140,6 +144,8 @@ private:
     void HandleExitRequested(StringHash eventType, VariantMap& eventData);
     /// Actually perform the exit actions.
     void DoExit();
+
+	void RunThreadFrame();
 
     /// Frame update timer.
     HiresTimer frameTimer_;
@@ -171,6 +177,8 @@ private:
     bool headless_;
     /// Audio paused flag.
     bool audioPaused_;
+	/// Main engine flag.
+	bool isMainEngine_ = true;
 };
 
 }

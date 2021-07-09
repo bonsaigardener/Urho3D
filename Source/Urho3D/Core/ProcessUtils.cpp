@@ -102,6 +102,17 @@ inline void SetFPUState(unsigned control)
 namespace Urho3D
 {
 
+#if defined(_MSC_VER)
+#if defined(URHO3D_MINIDUMPS)
+#else
+	int Test_WriteMiniDump(const char* applicationName, void* exceptionPointers)
+	{
+		return 0;
+	}
+#endif
+#endif
+
+
 #ifdef _WIN32
 static bool consoleOpened = false;
 #endif

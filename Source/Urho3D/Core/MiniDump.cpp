@@ -47,6 +47,8 @@ URHO3D_API int WriteMiniDump(const char* applicationName, void* exceptionPointer
 
     miniDumpWritten = true;
 
+#if defined(URHO3D_MINIDUMPS)
+
     MINIDUMP_EXCEPTION_INFORMATION info;
     info.ThreadId = GetCurrentThreadId();
     info.ExceptionPointers = (EXCEPTION_POINTERS*)exceptionPointers;
@@ -75,6 +77,8 @@ URHO3D_API int WriteMiniDump(const char* applicationName, void* exceptionPointer
         ErrorDialog(applicationName, "An unexpected error occurred. A minidump was generated to " + miniDumpName);
     else
         ErrorDialog(applicationName, "An unexpected error occurred. Could not write minidump.");
+
+#endif
 
     return EXCEPTION_EXECUTE_HANDLER;
 }

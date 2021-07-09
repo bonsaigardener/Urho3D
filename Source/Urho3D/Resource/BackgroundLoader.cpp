@@ -282,9 +282,12 @@ void BackgroundLoader::FinishBackgroundLoading(BackgroundLoadItem& item)
         URHO3D_LOGDEBUG("Finishing background loaded resource " + resource->GetName());
         success = resource->EndLoad();
 
+#ifdef URHO3D_TRACY_PROFILING
+#else
 #ifdef URHO3D_PROFILING
         if (profiler)
             profiler->EndBlock();
+#endif
 #endif
     }
     resource->SetAsyncLoadState(ASYNC_DONE);

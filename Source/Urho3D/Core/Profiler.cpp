@@ -28,6 +28,19 @@
 
 #include "../DebugNew.h"
 
+
+#ifdef SGE_HAS_TRACY_PROFILER
+#  if SGE_HAS_TRACY_PROFILER
+#    ifdef _DEBUG
+#      pragma message("---------------------------------------- linking TRACY PROFILING debug")
+#      pragma comment(lib, SGE_CONCAT2(SGE_MODULE_BUILD_DIR, /Debug/TracyProfiler_Module.lib))
+#    else
+#      pragma message("---------------------------------------- linking TRACY PROFILING release")
+#      pragma comment(lib, SGE_CONCAT2(SGE_MODULE_BUILD_DIR, /Release/TracyProfiler_Module.lib))
+#    endif
+#  endif
+#  endif
+
 namespace Urho3D
 {
 

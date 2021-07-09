@@ -468,62 +468,87 @@ bool Engine::InitializeResourceCache(const VariantMap& parameters, bool removeOl
     return true;
 }
 
-void Engine::RunFrame()
+void Engine::RunThreadFrame()
 {
-    assert(initialized_);
+	assert(initialized_);
 
-    // If not headless, and the graphics subsystem no longer has a window open, assume we should exit
-    if (!headless_ && !GetSubsystem<Graphics>()->IsInitialized())
-        exiting_ = true;
+	// If not headless, and the graphics subsystem no longer has a window open, assume we should exit
+	if (!headless_ && !GetSubsystem<Graphics>()->IsInitialized())
+		exiting_ = true;
 
-    if (exiting_)
-        return;
+	if (exiting_)
+	{
+		return;
+	}
 
-    // Note: there is a minimal performance cost to looking up subsystems (uses a hashmap); if they would be looked up several
-    // times per frame it would be better to cache the pointers
-    auto* time = GetSubsystem<Time>();
-    auto* input = GetSubsystem<Input>();
-    auto* audio = GetSubsystem<Audio>();
+	{
+		// Note: there is a minimal performance cost to looking up subsystems (uses a hashmap); if they would be looked up several
+		// times per frame it would be better to cache the pointers
+		auto* time = GetSubsystem<Time>();
+		auto* input = GetSubsystem<Input>();
+		auto* audio = GetSubsystem<Audio>();
 
 #ifdef URHO3D_PROFILING
-    if (EventProfiler::IsActive())
-    {
-        auto* eventProfiler = GetSubsystem<EventProfiler>();
-        if (eventProfiler)
-            eventProfiler->BeginFrame();
-    }
+		if (EventProfiler::IsActive())
+		{
+			auto* eventProfiler = GetSubsystem<EventProfiler>();
+			if (eventProfiler)
+			{
+				eventProfiler->BeginFrame();
+			}
+		}
 #endif
 
-    time->BeginFrame(timeStep_);
+		time->BeginFrame(timeStep_);
 
-    // If pause when minimized -mode is in use, stop updates and audio as necessary
-    if (pauseMinimized_ && input->IsMinimized())
+		// If pause when minimized -mode is in use, stop updates and audio as necessary
+		if (pauseMinimized_ && input->IsMinimized())
+		{
+			if (audio->IsPlaying())
+			{
+				audio->Stop();
+				audioPaused_ = true;
+			}
+		}
+		else
+		{
+			// Only unpause when it was paused by the engine
+			if (audioPaused_)
+			{
+				audio->Play();
+				audioPaused_ = false;
+			}
+
+			Update();
+		}
+
+		Render();
+		ApplyFrameLimit();
+
+		time->EndFrame();
+	}
+}
+
+void Engine::RunFrame()
+{
+	const bool isMainThread(Thread::IsMainThread());if(isMainThread){}
+	const bool isMainEngine(IsMainEngine());
+
+    assert(initialized_);
+
+	if (isMainEngine)
     {
-        if (audio->IsPlaying())
-        {
-            audio->Stop();
-            audioPaused_ = true;
-        }
-    }
-    else
-    {
-        // Only unpause when it was paused by the engine
-        if (audioPaused_)
-        {
-            audio->Play();
-            audioPaused_ = false;
-        }
-
-        Update();
-    }
-
-    Render();
-    ApplyFrameLimit();
-
-    time->EndFrame();
-
-    // Mark a frame for profiling
-    URHO3D_PROFILE_FRAME();
+		RunThreadFrame();
+		// Mark a frame for profiling
+		URHO3D_PROFILE_FRAME();
+	}
+	else
+	{
+#if SGE_HAS_TRACY_PROFILER
+		URHO3D_PROFILE_FUNCTION()
+#endif
+		RunThreadFrame();
+	}
 }
 
 Console* Engine::CreateConsole()

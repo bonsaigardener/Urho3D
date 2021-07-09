@@ -63,9 +63,12 @@ bool Resource::Load(Deserializer& source)
         success &= EndLoad();
     SetAsyncLoadState(ASYNC_DONE);
 
+#ifdef URHO3D_TRACY_PROFILING
+#else
 #ifdef URHO3D_PROFILING
     if (profiler)
         profiler->EndBlock();
+#endif
 #endif
 
     return success;

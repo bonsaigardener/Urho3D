@@ -21,7 +21,7 @@
 #
 
 # Set CMake minimum version
-cmake_minimum_required (VERSION 3.10.2)
+cmake_minimum_required (VERSION 3.17.3)
 
 # Set project name
 project (Urho3D)
@@ -31,6 +31,7 @@ set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
 
 # Include UrhoCommon.cmake module after setting project name
 include (UrhoCommon)
+include (SGE_Common)
 
 # Setup SDK install destinations
 set (PATH_SUFFIX Urho3D)
@@ -180,6 +181,22 @@ endif ()
 # Setup SDK-like include dir in the build tree for building the Urho3D library
 set (THIRD_PARTY_INCLUDE_DIR ${CMAKE_BINARY_DIR}/${DEST_INCLUDE_DIR}/ThirdParty)
 file (MAKE_DIRECTORY ${THIRD_PARTY_INCLUDE_DIR})
+
+# External modules integration
+if (SGE_MODULE_BUILD_DIR)
+    add_compile_definitions(SGE_MODULE_BUILD_DIR=${SGE_MODULE_BUILD_DIR})
+endif ()
+
+# Tracy profiler integration
+if (SGE_TRACY_PROFILE)
+    add_compile_definitions(SGE_HAS_TRACY_PROFILER=1)
+endif()
+if (SGE_TRACY_PROFILER_SRC)
+    add_compile_definitions(SGE_TRACY_PROFILER_SRC=${SGE_TRACY_PROFILER_SRC})
+endif ()
+if (SGE_TRACY_PROFILER_MODULE_SRC)
+    add_compile_definitions(SGE_TRACY_PROFILER_MODULE_SRC=${SGE_TRACY_PROFILER_MODULE_SRC})
+endif ()
 
 # Urho3D source
 add_subdirectory (Source)

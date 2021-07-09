@@ -22,13 +22,44 @@
 
 #pragma once
 
+#include "../Core/Macros.h"
 #include "../Container/Str.h"
 #include "../Core/Thread.h"
 #include "../Core/Timer.h"
 
-#ifdef URHO3D_TRACY_PROFILING
-#define TRACY_ENABLE 1
-#include "Tracy/Tracy.hpp"
+
+#ifdef SGE_HAS_TRACY_PROFILER
+#  if SGE_HAS_TRACY_PROFILER
+#    pragma message("---------------------------------------- TRACY PROFILING is active")
+#  else
+#    pragma message("---------------------------------------- TRACY PROFILING is not active")
+#  endif
+#else
+#  define SGE_HAS_TRACY_PROFILER 0
+#  pragma message("---------------------------------------- TRACY PROFILING is not active")
+#endif
+
+#if SGE_HAS_TRACY_PROFILER
+#  ifndef SGE_TRACY_PROFILER_SRC
+#    error SGE_TRACY_PROFILER_SRC is not defined - example <path>/github/tracy
+#  endif
+
+#  ifndef SGE_TRACY_PROFILER_MODULE_SRC
+#    error SGE_TRACY_PROFILER_MODULE_SRC is not defined - example <path>/modules/plugins/profiler/develop/tracy
+#  endif
+
+#  include SGE_CONCAT2(SGE_TRACY_PROFILER_MODULE_SRC, /TracyProfiler.h)
+#  define TRACY_IMPORTS
+#  define TRACY_ENABLE
+//#  define TRACY_CALLSTACK sge::tracy::QueryCallStackDepth()
+#  define TRACY_ON_DEMAND
+#  include SGE_CONCAT2(SGE_TRACY_PROFILER_SRC, /Tracy.hpp)
+#  define URHO3D_TRACY_PROFILING
+#else
+#  ifdef URHO3D_TRACY_PROFILING
+#    define TRACY_ENABLE 1
+#    include "Tracy/Tracy.hpp"
+#  endif
 #endif
 
 namespace Urho3D
