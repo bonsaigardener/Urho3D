@@ -149,7 +149,7 @@ cmake_dependent_option (URHO3D_64BIT "Enable 64-bit build, the default is set ba
 option (URHO3D_ANGELSCRIPT "Enable AngelScript scripting support" TRUE)
 cmake_dependent_option (URHO3D_FORCE_AS_MAX_PORTABILITY "Use generic calling convention for AngelScript on any platform" FALSE "URHO3D_ANGELSCRIPT" FALSE)
 option (URHO3D_IK "Enable inverse kinematics support" TRUE)
-option (URHO3D_LUA "Enable additional Lua scripting support" TRUE)
+option (URHO3D_LUA "Enable additional Lua scripting support" FALSE)
 option (URHO3D_NAVIGATION "Enable navigation support" TRUE)
 cmake_dependent_option (URHO3D_NETWORK "Enable networking support" TRUE "NOT WEB" FALSE)
 option (URHO3D_PHYSICS "Enable physics support" TRUE)
@@ -170,7 +170,7 @@ if (RPI)
     link_directories (${VIDEOCORE_LIBRARY_DIRS})
 endif ()
 if (CMAKE_PROJECT_NAME STREQUAL Urho3D)
-    set (URHO3D_LIB_TYPE STATIC CACHE STRING "Specify Urho3D library type, possible values are STATIC (default) and SHARED (not available for Emscripten)")
+    set (URHO3D_LIB_TYPE SHARED CACHE STRING "Specify Urho3D library type, possible values are STATIC (optional) and SHARED (default - not available for Emscripten)")
     # Non-Windows platforms always use OpenGL, the URHO3D_OPENGL variable will always be forced to TRUE, i.e. it is not an option at all
     # Windows platform has URHO3D_OPENGL as an option, MSVC compiler default to FALSE (i.e. prefers Direct3D) while MinGW compiler default to TRUE
     if (MINGW)
@@ -281,7 +281,7 @@ else ()
     endif ()
 endif ()
 # Structured exception handling and minidumps on MSVC only
-cmake_dependent_option (URHO3D_MINIDUMPS "Enable minidumps on crash (VS only)" TRUE "MSVC" FALSE)
+cmake_dependent_option (URHO3D_MINIDUMPS "Enable minidumps on crash (VS only)" FALSE "MSVC" FALSE)
 # By default Windows platform setups main executable as Windows application with WinMain() as entry point
 cmake_dependent_option (URHO3D_WIN32_CONSOLE "Use console main() instead of WinMain() as entry point when setting up Windows executable targets (Windows platform only)" FALSE "WIN32" FALSE)
 cmake_dependent_option (URHO3D_MACOSX_BUNDLE "Use MACOSX_BUNDLE when setting up macOS executable targets (Xcode/macOS platform only)" FALSE "XCODE AND NOT ARM" FALSE)
