@@ -48,7 +48,7 @@
 #    error SGE_TRACY_PROFILER_MODULE_SRC is not defined - example <path>/modules/plugins/profiler/develop/tracy
 #  endif
 
-#  include SGE_CONCAT2(SGE_TRACY_PROFILER_MODULE_SRC, /TracyProfiler.h)
+#  include SGE_CONCAT2(SGE_TRACY_PROFILER_MODULE_SRC, /TracyProfilerClient.h)
 #  define TRACY_IMPORTS
 #  define TRACY_ENABLE
 //#  define TRACY_CALLSTACK sge::tracy::QueryCallStackDepth()
